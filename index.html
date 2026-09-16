@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>第一印象診断 | ジブンwoカシカ</title>
+<meta name="description" content="「怖い」「冷たい」と思われていない？ 心理学の「温かさ×有能さ」の2軸で、あなたが初対面でどう見えているかを20問・3分で可視化します。"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05080f;--surface:#0a0f1a;--surface2:#101725;
+  --border:rgba(120,180,255,0.09);--border2:rgba(120,180,255,0.18);
+  --text:#e6edf8;--muted:#5a6a85;--faint:#141c2b;
+  --warm:#E8734A;--warm2:#B94E2C;--cool:#4AA8E8;--cool2:#2C72B9;--cream:#FFD9A0;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;-webkit-text-size-adjust:100%}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 50% 40% at 78% 12%,rgba(232,115,74,0.07),transparent),
+             radial-gradient(ellipse 45% 50% at 12% 88%,rgba(74,168,232,0.06),transparent);
+  pointer-events:none;z-index:0}
+.app{max-width:600px;margin:0 auto;padding:0 1.2rem 5rem;position:relative;z-index:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.fade-in{animation:fadeUp .5s cubic-bezier(.22,.68,0,1.1) forwards}
+
+/* TOP */
+.top{padding:3.2rem 0 2rem}
+.top-eye{font-size:.64rem;letter-spacing:.24em;color:var(--muted);margin-bottom:1rem;text-transform:uppercase;text-align:center}
+.top h1{font-size:1.5rem;font-weight:700;line-height:1.55;color:#fff;margin-bottom:.7rem;text-align:center;letter-spacing:.02em}
+.top-sub{font-size:.66rem;letter-spacing:.16em;color:var(--muted);margin-bottom:2.2rem;text-align:center}
+.intro-body{font-size:.87rem;line-height:2.05;color:#93a3bd;margin-bottom:1.5rem}
+.intro-body p{margin-bottom:.95rem}
+.intro-body em{color:var(--warm);font-style:normal;font-weight:500}
+.hook{border-left:2px solid var(--warm2);padding-left:1.2rem;margin:1.3rem 0;font-size:.87rem;line-height:1.95;color:#b3c0d6}
+.axis-box{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.4rem}
+.axis-box h4{font-size:.67rem;color:var(--muted);letter-spacing:.12em;margin-bottom:.9rem}
+.axis-list{display:flex;flex-direction:column;gap:.6rem}
+.axis-row{display:flex;align-items:flex-start;gap:.8rem;font-size:.8rem;line-height:1.75;color:#8494ae}
+.axis-tag{font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:20px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.warn-box{background:rgba(232,115,74,.05);border:.5px solid rgba(232,115,74,.18);border-radius:10px;padding:.9rem 1.1rem;margin-bottom:1.5rem;font-size:.78rem;color:#8494ae;line-height:1.85}
+.btn-start{width:100%;padding:1.05rem;font-size:.98rem;font-weight:700;letter-spacing:.08em;border-radius:12px;border:none;background:linear-gradient(135deg,var(--warm),var(--warm2));color:#fff;cursor:pointer;transition:.25s;font-family:'Noto Sans JP',sans-serif}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,115,74,.3)}
+
+/* QUIZ */
+.quiz-wrap{padding-top:2.2rem}
+.prog-wrap{margin-bottom:1.6rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem}
+.axis-pill{font-size:.66rem;font-weight:700;padding:3px 11px;border-radius:20px;letter-spacing:.06em}
+.q-cnt{font-size:.7rem;color:var(--muted)}
+.prog-bar{height:2.5px;background:var(--faint);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--warm2),var(--warm),var(--cream));border-radius:2px;transition:width .4s ease}
+.basis-note{font-size:.63rem;color:var(--muted);text-align:right;margin-top:.45rem;letter-spacing:.05em}
+.q-card{background:var(--surface);border:.5px solid var(--border);border-radius:14px;padding:1.5rem 1.4rem;margin-bottom:1.2rem}
+.q-text{font-size:.97rem;line-height:1.85;color:#fff;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:.5rem}
+.opt-btn{width:100%;padding:.82rem 1rem;font-size:.85rem;font-family:'Noto Sans JP',sans-serif;border:.5px solid var(--border);border-radius:9px;background:var(--surface);color:#8494ae;cursor:pointer;text-align:left;transition:.18s}
+.opt-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
+.opt-btn.selected{border-color:var(--warm);color:#fff;background:rgba(232,115,74,.12)}
+.nav-row{display:flex;justify-content:flex-start;margin-top:1.2rem}
+.btn-prev{padding:.6rem 1.1rem;font-size:.76rem;font-family:'Noto Sans JP',sans-serif;border:.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}
+.btn-prev:hover{color:var(--text);border-color:var(--border2)}
+
+/* LOADING */
+.loading{padding:6rem 0;text-align:center}
+.spinner{width:34px;height:34px;border:2px solid var(--faint);border-top-color:var(--warm);border-radius:50%;margin:0 auto 1.4rem;animation:spin .9s linear infinite}
+.loading p{font-size:.8rem;color:var(--muted);letter-spacing:.1em;animation:pulse 1.6s ease-in-out infinite}
+
+/* RESULT */
+.result-wrap{padding-top:2.2rem}
+.result-header{text-align:center;padding:2rem 1.2rem 2.2rem;background:var(--surface);border:.5px solid var(--border);border-radius:16px;margin-bottom:1.2rem}
+.result-label{font-size:.63rem;letter-spacing:.24em;color:var(--muted);margin-bottom:1rem}
+.result-type{font-size:1.45rem;font-weight:700;line-height:1.5;margin-bottom:.5rem}
+.result-one{font-size:.85rem;color:#93a3bd;line-height:1.9;margin-top:.9rem}
+
+/* MAP */
+.map-wrap{background:var(--surface);border:.5px solid var(--border);border-radius:14px;padding:1.4rem 1.2rem 1.1rem;margin-bottom:1.2rem}
+.map{position:relative;width:100%;max-width:300px;aspect-ratio:1;margin:0 auto;border-radius:10px;background:var(--faint);overflow:hidden}
+.map-q{position:absolute;width:50%;height:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#3f4d63;text-align:center;line-height:1.5;padding:4px}
+.map-line{position:absolute;background:rgba(120,180,255,.13)}
+.map-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--warm);box-shadow:0 0 0 4px rgba(232,115,74,.22);transform:translate(-50%,50%);transition:.6s cubic-bezier(.22,.68,0,1.1)}
+.map-axis-x,.map-axis-y{font-size:.62rem;color:var(--muted);text-align:center;letter-spacing:.08em}
+.map-axis-x{margin-top:.7rem}
+.map-axis-y{margin-bottom:.6rem}
+
+/* SCORES */
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem}
+.score-card{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:1.1rem}
+.score-name{font-size:.72rem;color:var(--muted);margin-bottom:.5rem;letter-spacing:.06em}
+.score-val{font-size:1.7rem;font-weight:300;line-height:1}
+.score-unit{font-size:.7rem;color:var(--muted);margin-left:.2rem}
+.score-bar{height:3px;background:var(--faint);border-radius:2px;overflow:hidden;margin-top:.7rem}
+.score-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.score-note{font-size:.68rem;color:var(--muted);margin-top:.55rem;line-height:1.6}
+
+/* SECTIONS */
+.sec{background:var(--surface);border:.5px solid var(--border);border-radius:14px;padding:1.4rem;margin-bottom:1rem}
+.sec-label{font-size:.63rem;letter-spacing:.2em;color:var(--muted);margin-bottom:.9rem}
+.sec-body{font-size:.86rem;line-height:2.05;color:#93a3bd}
+.sec-body strong{color:var(--text);font-weight:500}
+.scene{display:flex;flex-direction:column;gap:.7rem}
+.scene-row{display:flex;gap:.75rem;align-items:flex-start;font-size:.84rem;line-height:1.8;color:#93a3bd}
+.scene-mark{color:var(--warm);flex-shrink:0;font-size:.7rem;margin-top:.45rem}
+.step{counter-reset:s;display:flex;flex-direction:column;gap:1rem}
+.step-row{display:flex;gap:.9rem;align-items:flex-start}
+.step-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(232,115,74,.15);color:var(--warm);font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.step-txt{font-size:.85rem;line-height:1.9;color:#93a3bd}
+.step-txt b{display:block;color:var(--text);font-weight:500;margin-bottom:.15rem}
+
+/* RELIABILITY */
+.rel-box{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:1rem}
+.rel-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.rel-label{font-size:.66rem;letter-spacing:.14em;color:var(--muted)}
+.rel-badge{font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:20px}
+.rel-note{font-size:.72rem;line-height:1.8;color:var(--muted)}
+
+.src{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1rem}
+.src p{font-size:.75rem;color:var(--muted);line-height:1.95}
+.btn-retry{width:100%;padding:.9rem;font-size:.82rem;font-family:'Noto Sans JP',sans-serif;border:.5px solid var(--border);border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;margin-top:.4rem}
+.btn-retry:hover{color:var(--text);border-color:var(--border2)}
+.quote{font-size:1.02rem;line-height:1.85;color:#fff;font-weight:500;padding:1rem 1.1rem;background:rgba(232,115,74,.08);border-radius:10px;border-left:2px solid var(--warm)}
+.micro{font-size:.68rem;line-height:1.75;color:var(--muted);margin-top:.9rem}
+.micro strong{color:#93a3bd;font-weight:500}
+.sub-list{display:flex;flex-direction:column;gap:1.05rem}
+.sub-row{}
+.sub-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.45rem}
+.sub-name{font-size:.86rem;color:var(--text);font-weight:500}
+.sub-ax{font-size:.64rem;letter-spacing:.06em;margin-right:.55rem;font-weight:700}
+.sub-val{font-size:1.05rem;font-weight:300}
+.sub-bar{height:3px;background:var(--faint);border-radius:2px;overflow:hidden}
+.sub-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.sub-desc{font-size:.72rem;color:var(--muted);line-height:1.7;margin-top:.45rem}
+.sub-flag{display:inline-block;font-size:.63rem;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:.5rem;white-space:nowrap}
+.sub-flag.low{background:rgba(232,115,74,.18);color:#E8734A}
+.sub-flag.high{background:rgba(94,203,138,.16);color:#5ECB8A}
+@media(max-width:400px){.score-grid{grid-template-columns:1fr}.top h1{font-size:1.32rem}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOP -->
+<section id="topPage" class="fade-in">
+  <div class="top">
+    <div class="top-eye">AI × PSYCHOLOGY</div>
+    <h1>第一印象診断</h1>
+    <div class="top-sub">温かさ × 有能さ ／ 全20問 ／ 約3分</div>
+  </div>
+
+  <div class="warn-box">
+    <strong style="color:#c8d4e6">はじめる前に、3つだけ。</strong><br>
+    ・答えるのはご自身の主観なので、結果には幅が出ます。<br>
+    ・これは「あなたがどんな人か」ではなく「初対面でどう見えやすいか」の目安です。<br>
+    ・受け取り方を決めるのは、いつもご本人です。
+  </div>
+
+  <div class="intro-body">
+    <p>直近3ヶ月の、初対面の場面を思い浮かべながら答えてください。</p>
+    <p>選ぶと自動で次の設問に進みます。「← 前の質問」で戻れます。</p>
+  </div>
+
+  <button class="btn-start" onclick="startQuiz()">診断をはじめる</button>
+</section>
+
+<!-- QUIZ -->
+<section id="quizPage" style="display:none">
+  <div class="quiz-wrap">
+    <div class="prog-wrap">
+      <div class="prog-top">
+        <span class="axis-pill" id="axisPill"></span>
+        <span class="q-cnt" id="qCnt"></span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      <div class="basis-note" id="basisNote"></div>
+    </div>
+    <div class="q-card"><div class="q-text" id="qText"></div></div>
+    <div class="opts" id="opts"></div>
+    <div class="nav-row"><button class="btn-prev" id="btnPrev" onclick="prevQ()">← 前の質問</button></div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section id="loadingPage" style="display:none">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>2軸と6要素を計算しています…</p>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="resultPage" style="display:none">
+  <div class="result-wrap" id="resultBody"></div>
+</section>
+
+</div>
+<script>
+// ══ 設問 ══ rev:true = 逆転項目
+// ax: W=温かさ / C=有能さ   sub: 下位要素（この診断での内訳）
+const QS=[
+ {id:1, ax:'W', sub:'A', basis:'対人的接近行動', rev:false, q:'初対面の相手に、自分から挨拶や一言を先にかけることが多い'},
+ {id:2, ax:'C', sub:'P', basis:'自己提示の明確さ', rev:false, q:'初対面でも、自分の仕事や役割を短くわかりやすく説明できる'},
+ {id:3, ax:'W', sub:'R', basis:'非言語的即時性', rev:false, q:'人の話を聞くとき、うなずきや相づちが自然に出ている'},
+ {id:4, ax:'C', sub:'D', basis:'発話の明瞭性', rev:false, q:'話すときの声は、相手が聞き取りやすい大きさとテンポだと思う'},
+ {id:5, ax:'W', sub:'E', basis:'感情表出性（逆転）', rev:true, q:'初対面の場では、表情があまり動かないほうだ'},
+ {id:6, ax:'C', sub:'S', basis:'不確実性への対処（逆転）', rev:true, q:'質問されたとき、言葉に詰まって長く黙ってしまうことがある'},
+ {id:7, ax:'W', sub:'R', basis:'知覚された応答性', rev:false, q:'相手の話に「それは大変でしたね」など、気持ちに触れる言葉を返す'},
+ {id:8, ax:'C', sub:'D', basis:'信頼性の行動的提示', rev:false, q:'約束の時間や場所を、自分から確認して整えるほうだ'},
+ {id:9, ax:'W', sub:'A', basis:'対人的接近行動（逆転）', rev:true, q:'初対面の場では、必要なこと以外はあまり話さない'},
+ {id:10,ax:'C', sub:'D', basis:'外見管理行動', rev:false, q:'人に会う前に、姿勢や身だしなみを一度確認する'},
+ {id:11,ax:'W', sub:'A', basis:'関係構築行動', rev:false, q:'会話のなかで、相手の名前を自然に呼ぶことがある'},
+ {id:12,ax:'C', sub:'S', basis:'情動安定の提示', rev:false, q:'自信のないことでも、わかる範囲を落ち着いて答えられる'},
+ {id:13,ax:'W', sub:'E', basis:'自己開示', rev:false, q:'自分の失敗やうまくいかなかった話を、初対面でも軽く出せる'},
+ {id:14,ax:'C', sub:'P', basis:'発話構成（逆転）', rev:true, q:'話が長くなって、結論が伝わりにくいと言われたことがある'},
+ {id:15,ax:'W', sub:'R', basis:'会話の拡張行動', rev:false, q:'相手が話しやすいように、質問を挟んで会話を広げる'},
+ {id:16,ax:'C', sub:'P', basis:'場の主導性', rev:false, q:'初対面の場でも、必要なら自分から話をまとめたり進めたりできる'},
+ {id:17,ax:'W', sub:'E', basis:'表情の受け取られ方（逆転）', rev:true, q:'真顔でいると「怒ってる？」「機嫌悪い？」と聞かれたことがある'},
+ {id:18,ax:'C', sub:'P', basis:'具体性の提示', rev:false, q:'質問に答えるとき、具体例や数字を交えて話すことが多い'},
+ {id:19,ax:'W', sub:'A', basis:'関係継続シグナル', rev:false, q:'別れ際に「またお話ししたいです」など、次につながる一言を添える'},
+ {id:20,ax:'C', sub:'S', basis:'緊張の表出（逆転）', rev:true, q:'緊張すると、早口になったり落ち着かない動きが出たりする'}
+];
+
+const OPTS=['まったく当てはまらない','あまり当てはまらない','どちらとも言えない','やや当てはまる','とても当てはまる'];
+
+const AX={
+  W:{name:'温かさ', color:'#E8734A', bg:'rgba(232,115,74,.18)'},
+  C:{name:'有能さ', color:'#4AA8E8', bg:'rgba(74,168,232,.18)'}
+};
+
+// 下位要素（この診断での内訳。確立された下位尺度ではありません）
+const SUB={
+  A:{ax:'W', name:'接近', desc:'自分から距離を詰める行動。挨拶、名前を呼ぶ、別れ際の一言。'},
+  R:{ax:'W', name:'応答', desc:'相手を受け止めて返す行動。うなずき、共感の言葉、質問で広げる。'},
+  E:{ax:'W', name:'表出', desc:'自分の内側を外に出す。表情の動き、失敗談などの自己開示。'},
+  P:{ax:'C', name:'提示', desc:'わかりやすく伝える。自己紹介、結論の位置、具体例、場をまとめる力。'},
+  S:{ax:'C', name:'安定', desc:'動じなさ。詰まらずに答える、緊張を表に出さない、落ち着いて見える。'},
+  D:{ax:'C', name:'整え', desc:'整えてから来ているか。声の通り、段取りの確認、身だしなみ。'}
+};
+
+// ══ 9タイプ（温かさ3帯 × 有能さ3帯）══
+const TYPES={
+ HH:{name:'信頼される人', color:'#FFD9A0',
+  one:'温かさも有能さも、行動として十分に外に出ています。初対面としては最も得な位置です。',
+  guess:'「感じもいいし、ちゃんとしている。ただ、なんとなく隙がないな」',
+  guessWhy:'両方が揃っていると、相手は安心すると同時に少し構えます。完璧に見える相手には、弱みを見せにくくなるためです。',
+  scene:['初対面の場で、自然と相談や質問が集まってくる','「感じがいい」と「しっかりしている」を同時に言われる','一方で、相手が遠慮して本音を出すまでに時間がかかることがある']},
+ HM:{name:'好かれて、任されはじめる人', color:'#F0B080',
+  one:'温かさは十分に届いています。有能さも伝わりはじめていますが、場面によってムラがあります。',
+  guess:'「話しやすい人。仕事のほうは、まだよくわからないけど悪くなさそう」',
+  guessWhy:'温かさが先に届くと、相手は好意的な前提で有能さを見はじめます。入口としては有利な状態です。',
+  scene:['初対面の空気はいつも和やかになる','「あの人に聞いてみよう」と思われはじめている','ただし重い判断は、まだ別の人に回ることがある']},
+ HL:{name:'安心される人', color:'#E8734A',
+  one:'温かさはよく伝わっています。もったいないのは、あなたの力が初対面では見えにくいことです。',
+  guess:'「いい人だな。頼っていいかは、まだ判断がつかない」',
+  guessWhy:'有能さは能力そのものではなく提示のされ方で伝わります。判断材料が渡っていないと、相手は保留します。',
+  scene:['「話しやすい」「優しい」とはよく言われる','一方で、重い役割は別の人に回ることが多い','自分の仕事の説明が、なぜかふわっとしてしまう']},
+ MH:{name:'頼られるが、心は読まれにくい人', color:'#6FC0F0',
+  one:'有能さがはっきり届いています。温かさは出てはいるものの、相手が確信を持つには足りていません。',
+  guess:'「できる人。でも、雑談を振っていいのかどうか読めない」',
+  guessWhy:'温かさは敵意のなさの判断材料です。中途半端だと、相手は安全側に倒して距離を測りに来ます。',
+  scene:['仕事や役割はすぐ任される','雑談の輪には、少し遅れて入ることが多い','親しくなるまでの助走が、他の人より長い']},
+ MM:{name:'無難に収まる人', color:'#93a3bd',
+  one:'2軸とも中間です。悪い印象は残りませんが、良い印象も残りにくい位置です。',
+  guess:'「悪い人じゃない。……どんな人だったっけ」',
+  guessWhy:'人の記憶は、平均より「どちらかが際立っている」ほうに残ります。無難は安全ですが、情報が薄まっている状態です。',
+  scene:['初対面で失敗はしないが、強く記憶されない','どちらかといえば聞き役に回ることが多い','あとから「あの人どんな人？」と聞かれると説明しにくいと言われる']},
+ ML:{name:'感じはいいが、印象が残りにくい人', color:'#A8B8CC',
+  one:'温かさは中間、有能さは届いていません。悪印象はないぶん、記憶にも残りにくくなっています。',
+  guess:'「感じは悪くなかった。何をしている人だったかな」',
+  guessWhy:'温かさが中間だと強い好意は生まれず、有能さが低いと記憶に残る理由もなくなります。情報量の問題です。',
+  scene:['その場は和やかに終わるが、次につながりにくい','自己紹介のあと、質問が返ってこないことが多い','「そういえば、あの人どうしてる？」と話題に出にくい']},
+ LH:{name:'一目置かれる人', color:'#4AA8E8',
+  one:'有能さは十分に伝わっています。足りていないのは能力ではなく、温かさの情報量です。',
+  guess:'「仕事はできる。ただ、ちょっと怖い」',
+  guessWhy:'温かさの手がかりがないと、相手は敵意の有無を判断できません。判断できないものは、安全側に見積もられます。',
+  scene:['仕事は任されるが、雑談には呼ばれにくい','「しっかりしてる」「頭いい」とは言われる','真顔でいるだけで、機嫌を心配されることがある']},
+ LM:{name:'とっつきにくいと思われやすい人', color:'#7B94B4',
+  one:'温かさが届いておらず、有能さも決め手になるほどは出ていません。距離を置かれやすい位置です。',
+  guess:'「話しかけていいのかどうか、わからない」',
+  guessWhy:'温かさも有能さも中途半端だと、相手は近づく理由も敬う理由も持てません。多くは誤解ですが、情報が足りないと誤解は解けません。',
+  scene:['自分から話しかけられることが少ない','質問されても、会話が続かずに終わる','本当は人が嫌いなわけではない、と自分では思っている']},
+ LL:{name:'読み取られにくい人', color:'#8B9BB4',
+  one:'温かさも有能さも、低いのではなく「出ていない」状態です。相手はあなたを判断できず、印象が保留になります。',
+  guess:'「……どういう人なんだろう」',
+  guessWhy:'これは内面の評価ではありません。情報がないと人は判断できず、判断できないものへの関心は自然に薄れます。逆に言えば、出す情報を一つ増やすだけで印象は動きます。',
+  scene:['初対面のあと、なぜか関係が続かない','「何を考えているかわからない」と言われたことがある','人見知りというより、場面ごとに固まってしまう感覚がある']}
+};
+
+// ══ 強み（最も高い下位要素で出し分け）══
+const STRENGTH={
+ A:'あなたの強みは<strong>接近</strong>です。自分から挨拶し、名前を呼び、別れ際に一言を残す。この行動は、相手の警戒をいちばん早く外します。人が「話しかけていいかどうか」を迷う時間を、あなたは最初から消してあげられます。',
+ R:'あなたの強みは<strong>応答</strong>です。うなずき、気持ちに触れる言葉、会話を広げる質問。相手は「ちゃんと聞いてもらえた」という感覚を持ち帰ります。これは初対面では、なかなか得られない体験です。',
+ E:'あなたの強みは<strong>表出</strong>です。表情が動き、自分の失敗も軽く出せる。相手はあなたを読み取れるので、探り合いの時間が要りません。安心して距離を詰められる相手だと受け取られます。',
+ P:'あなたの強みは<strong>提示</strong>です。自分が何者かを短く言え、結論から話し、具体例を出せる。相手はあなたを理解するのに労力を使いません。理解しやすい相手は、それだけで信頼されやすくなります。',
+ S:'あなたの強みは<strong>安定</strong>です。詰まらず、慌てず、わからないことも落ち着いて答えられる。相手は「この人に任せても大丈夫そうだ」という感覚を、言葉の内容より先に受け取ります。',
+ D:'あなたの強みは<strong>整え</strong>です。声が通り、段取りを確認し、身だしなみを整えてから来る。相手は会う前から尊重されていると感じます。地味に見えて、いちばん裏切らない要素です。'
+};
+
+// ══ 処方（最も低い下位要素で出し分け）══
+const RX={
+ A:{label:'接近', steps:[
+   ['先に挨拶する、だけを決める','全部を変えようとすると続きません。「相手より先に、目を見て挨拶する」の一点だけを固定します。内容は「おはようございます」で十分です。'],
+   ['相手の名前を一度だけ呼ぶ','会話のなかで一度、名前を口に出します。「○○さんは」と言うだけで、相手はあなたに関心を向けられていると受け取ります。'],
+   ['別れ際に一言だけ足す','「今日はありがとうございました」の後に「またお話ししたいです」を足す。次につながる意思が、温かさとして伝わります。']]},
+ R:{label:'応答', steps:[
+   ['うなずきを一段大きくする','自分では大げさに感じるくらいで、相手にはちょうど伝わります。聞いているという情報が、そのまま温かさになります。'],
+   ['「大変でしたね」を一往復入れる','解決策や意見の前に、感情に触れる言葉を一つ。これは同情ではなく、受け取ったという情報の提示です。'],
+   ['質問を一つ多く返す','相手の話に「それで、どうなったんですか」と一つ足す。会話が続く責任を、あなたが少しだけ引き受けます。']]},
+ E:{label:'表出', steps:[
+   ['最初の3秒だけ、口角を上げる','ずっと笑顔でいる必要はありません。会った瞬間の3秒だけ意識すると、そのあとの真顔の解釈が変わります。'],
+   ['小さな失敗を一つ話す','自己開示は温かさをもっとも早く伝えます。重い話は不要で、「道に迷いました」で十分です。'],
+   ['「怒ってる？」と言われた過去を思い出す','あなたの真顔は、あなたが思うより情報量が少ないだけです。責める材料ではなく、直す場所の目印として使ってください。']]},
+ P:{label:'提示', steps:[
+   ['自己紹介を15秒に固定する','「何をしている人か」「何ができるか」を一文ずつ。事前に決めておくだけで、有能さの伝わり方が変わります。'],
+   ['結論を先に置く','経緯から話すと、相手は結論を待つあいだ理解を保留します。「結論から言うと」を口癖にするだけで解決します。'],
+   ['数字を一つ入れる','「けっこうやってます」より「3年ほど担当しています」。具体性は、それ自体が有能さの証拠になります。']]},
+ S:{label:'安定', steps:[
+   ['「わかりません」を言い切る','詰まって黙るより、「そこは把握していません。調べて戻します」のほうが有能に見えます。長い沈黙だけが減点対象です。'],
+   ['語尾を言い切る','「〜かなと思います」を「〜です」に。内容を変えずに、印象だけが変わります。'],
+   ['最初の一呼吸を置く','緊張は早口に出ます。答える前に一拍置くだけで、落ち着いて見える度合いがはっきり変わります。']]},
+ D:{label:'整え', steps:[
+   ['声を一段大きくする','聞き返される回数が減るだけで、相手の負担が減ります。負担の少ない相手は、有能に見えます。'],
+   ['前日に段取りを一度確認する','時間・場所・持ち物を自分から確認して共有する。これは能力ではなく習慣で、いちばん早く効きます。'],
+   ['会う前に鏡を一度見る','身だしなみは、相手への敬意として読まれます。整えて来た人は、それだけで「ちゃんとしている」に分類されます。']]}
+};
+
+// ══ 場面別の見え方（温かさ帯 × 有能さ帯 の9通り × 3場面）══
+const SCENES=[
+ {name:'評価される場（面接・商談・初回打ち合わせ）', map:{
+   HH:'開始10分で「この人なら大丈夫」と判断されます。あとは内容の勝負に持ち込めます。',
+   HM:'感じの良さで場は温まりますが、決め手は実績の出し方です。数字を一つ足すと一気に締まります。',
+   HL:'雰囲気は好意的に進むのに、結論が保留されやすい場面です。冒頭の自己紹介を整えるだけで変わります。',
+   MH:'内容は評価されますが、「一緒に仕事がしやすいか」で少し引かれます。最後の一言が効きます。',
+   MM:'可もなく不可もなく通過します。競合がいる場面では、記憶に残らないことが不利になります。',
+   ML:'場は穏やかでも、判断材料が少ないまま終わりがちです。事前準備がそのまま結果を動かします。',
+   LH:'評価はされます。ただ「やりにくそう」という留保がつきやすい。最初の3秒が最大の投資先です。',
+   LM:'緊張が距離として伝わり、実力より低く見積もられやすい場面です。挨拶だけ固定すると安定します。',
+   LL:'相手が判断できず、印象が保留のまま終わります。ここは事前に話す内容を用意しておくのが効きます。'}},
+ {name:'初対面の会食・懇親会', map:{
+   HH:'自然に人が集まります。ただし聞き役に回りすぎると、あなた自身の情報が残りません。',
+   HM:'その場の空気を良くする役割になります。自分の話を一つ出すと、記憶にも残ります。',
+   HL:'いちばん得意な場面です。楽しく終わります。名刺代わりの一言だけ用意しておくと完璧です。',
+   MH:'話は面白がられますが、距離は縮まりにくい。相づちを一段大きくするだけで空気が変わります。',
+   MM:'居心地は悪くないものの、終わったあと連絡先が増えていないことが多い場面です。',
+   ML:'end席になりやすく、会話の中心から外れがちです。質問を一つ返す癖が効きます。',
+   LH:'一目置かれつつ、話しかけられにくい。あなたから一度話しかけると、評価が跳ね上がります。',
+   LM:'会話が続かずに終わることが多い場面です。自分の話を一つ持っておくと、沈黙が怖くなくなります。',
+   LL:'いちばん消耗する場面かもしれません。全員と話す必要はなく、一人と深く話すほうが向いています。'}},
+ {name:'生活圏（ご近所・保護者会・習いごと）', map:{
+   HH:'早い段階で中心的な立ち位置になります。頼られすぎない線引きが課題になります。',
+   HM:'穏やかに関係が広がります。無理をしなくても、時間が味方してくれる位置です。',
+   HL:'とても好かれます。役割を頼まれやすいので、断る言葉を一つ用意しておくと安心です。',
+   MH:'頼りにはされますが、井戸端の輪には入りにくい。名前を呼ぶだけで距離が縮みます。',
+   MM:'当たり障りなく過ごせます。深い付き合いを望むなら、こちらから一歩出る必要があります。',
+   ML:'挨拶だけの関係で止まりやすい。天気以外の話題を一つ足すと、次につながります。',
+   LH:'きちんとした人だと思われる一方、少し遠巻きにされます。誤解されやすいのはこの場面です。',
+   LM:'「感じが悪い」と誤解されることがあります。あなたの実態とは無関係なので、挨拶で十分に覆せます。',
+   LL:'存在を認識されるまでに時間がかかります。焦らず、同じ相手に3回挨拶するところから始まります。'}}
+];
+
+// ══ state ══
+let cur=0, ans={};
+function show(id){document.getElementById(id).style.display='block';}
+function hide(id){document.getElementById(id).style.display='none';}
+function startQuiz(){ cur=0; ans={}; hide('topPage'); show('quizPage'); renderQ(); window.scrollTo(0,0); }
+
+function renderQ(){
+  const q=QS[cur], a=AX[q.ax];
+  const pill=document.getElementById('axisPill');
+  pill.textContent=a.name+' / '+SUB[q.sub].name; pill.style.background=a.bg; pill.style.color=a.color;
+  document.getElementById('qCnt').textContent=(cur+1)+' / '+QS.length;
+  document.getElementById('progFill').style.width=Math.round((cur/QS.length)*100)+'%';
+  document.getElementById('basisNote').textContent='参照した概念: '+q.basis;
+  document.getElementById('qText').textContent=q.q;
+  const box=document.getElementById('opts'); box.innerHTML='';
+  OPTS.forEach(function(o,i){
+    const b=document.createElement('button');
+    b.className='opt-btn'+(ans[q.id]===i+1?' selected':'');
+    b.textContent=(i+1)+'. '+o;
+    b.onclick=function(){ selectAns(i+1); };
+    box.appendChild(b);
+  });
+  document.getElementById('btnPrev').style.visibility = cur>0 ? 'visible' : 'hidden';
+}
+function selectAns(v){
+  const q=QS[cur]; ans[q.id]=v; renderQ();
+  if(cur===QS.length-1){
+    setTimeout(function(){ hide('quizPage'); show('loadingPage'); setTimeout(showResult,1600); },380);
+  } else {
+    setTimeout(function(){ cur++; renderQ(); window.scrollTo(0,0); },300);
+  }
+}
+function prevQ(){ if(cur>0){ cur--; renderQ(); window.scrollTo(0,0); } }
+
+// ══ 採点 ══
+function calcScores(a){
+  const raw={};
+  QS.forEach(function(q){ const v=a[q.id]||3; raw[q.id]= q.rev ? (6-v) : v; });
+  const aS={W:0,C:0}, aN={W:0,C:0}, sS={}, sN={};
+  Object.keys(SUB).forEach(function(k){ sS[k]=0; sN[k]=0; });
+  QS.forEach(function(q){ aS[q.ax]+=raw[q.id]; aN[q.ax]++; sS[q.sub]+=raw[q.id]; sN[q.sub]++; });
+  const pct={}, sub={};
+  ['W','C'].forEach(function(k){ pct[k]=Math.round(((aS[k]-aN[k])/(aN[k]*4))*100); });
+  Object.keys(SUB).forEach(function(k){ sub[k]=Math.round(((sS[k]-sN[k])/(sN[k]*4))*100); });
+  return {pct:pct, sub:sub};
+}
+
+function band(v){ return v>=65 ? 'H' : (v>=40 ? 'M' : 'L'); }
+function getKey(pct){ return band(pct.W)+band(pct.C); }
+
+// 最も低い／最も高い下位要素（同点は温かさ側を優先＝先に判断される軸のため）
+const SUB_ORDER=['A','R','E','P','S','D'];
+function lowestSub(sub){
+  let k=SUB_ORDER[0];
+  SUB_ORDER.forEach(function(x){ if(sub[x] < sub[k]) k=x; });
+  return k;
+}
+function highestSub(sub){
+  let k=SUB_ORDER[0];
+  SUB_ORDER.forEach(function(x){ if(sub[x] > sub[k]) k=x; });
+  return k;
+}
+
+// ══ 信頼性 ══
+function calcReliability(a){
+  const vals=QS.map(function(q){ return a[q.id]||3; });
+  const same=vals.filter(function(v){ return v===vals[0]; }).length;
+  const mid=vals.filter(function(v){ return v===3; }).length;
+  const norm=QS.filter(function(q){return !q.rev;}).map(function(q){return a[q.id]||3;});
+  const revs=QS.filter(function(q){return q.rev;}).map(function(q){return a[q.id]||3;});
+  const avgN=norm.reduce(function(s,v){return s+v;},0)/norm.length;
+  const avgR=revs.reduce(function(s,v){return s+v;},0)/revs.length;
+  const contradicted = (avgN>=4.2 && avgR>=4.2) || (avgN<=1.8 && avgR<=1.8);
+  const allSameNonMid = same>=QS.length-2 && vals[0]!==3;
+  if(allSameNonMid || contradicted){
+    return {label:'要確認', color:'#E8A04A', note:'通常の設問と逆転の設問で、答えの向きが揃いすぎています。読み飛ばしがあったかもしれません。もう一度ゆっくり答えると、結果の精度が上がります。'};
+  }
+  if(mid>=12){ return {label:'参考程度', color:'#8B9BB4', note:'「どちらとも言えない」が多いため、軸の差が出にくくなっています。迷ったときは、直近3ヶ月の実際の行動で選ぶと輪郭が出ます。'}; }
+  if(mid>=7){ return {label:'中程度', color:'#4AA8E8', note:'いくつか判断に迷った項目がありますが、全体の傾向は読み取れます。'}; }
+  return {label:'高い', color:'#5ECB8A', note:'回答に一貫性があり、信頼できる結果です。'};
+}
+
+// ══ 結果描画 ══
+function showResult(){
+  hide('loadingPage'); show('resultPage');
+  const sc=calcScores(ans);
+  const key=getKey(sc.pct);
+  const t=TYPES[key];
+  let low=lowestSub(sc.sub), high=highestSub(sc.sub);
+  const flat = sc.sub[low]===sc.sub[high]; // 6要素がすべて同点
+  const rel=calcReliability(ans);
+  const w=sc.pct.W, c=sc.pct.C;
+
+  let h='';
+  h+='<div class="result-header">'
+   + '<div class="result-label">診断結果 &nbsp;|&nbsp; '+key+'-'+low+'</div>'
+   + '<div class="result-type" style="color:'+t.color+'">'+t.name+'</div>'
+   + '<div class="result-one">'+t.one+'</div>'
+   + '</div>';
+
+  // 相手の内心
+  h+='<div class="sec" style="border-color:rgba(232,115,74,.28)">'
+   + '<div class="sec-label">初対面の相手は、たぶんこう思っています</div>'
+   + '<div class="quote">'+t.guess+'</div>'
+   + '<div class="sec-body" style="margin-top:.9rem">'+t.guessWhy+'</div>'
+   + '<div class="micro">※ あなたのスコアから逆算した「そう推測されやすい」という目安です。実際に言われた言葉ではありません。</div>'
+   + '</div>';
+
+  // 2軸マップ
+  h+='<div class="map-wrap">'
+   + '<div class="map-axis-y">↑ 有能さ</div>'
+   + '<div class="map">'
+   + '<div class="map-line" style="left:40%;top:0;width:1px;height:100%"></div>'
+   + '<div class="map-line" style="left:65%;top:0;width:1px;height:100%"></div>'
+   + '<div class="map-line" style="left:0;bottom:40%;width:100%;height:1px"></div>'
+   + '<div class="map-line" style="left:0;bottom:65%;width:100%;height:1px"></div>'
+   + '<div class="map-dot" style="left:'+w+'%;bottom:'+c+'%"></div>'
+   + '</div>'
+   + '<div class="map-axis-x">温かさ →</div>'
+   + '<div class="micro" style="text-align:center">線は「低・中・高」の境目（40点と65点）です。</div>'
+   + '</div>';
+
+  // 2軸スコア
+  h+='<div class="score-grid">'
+   + '<div class="score-card"><div class="score-name">温かさ</div>'
+   + '<div class="score-val" style="color:#E8734A">'+w+'<span class="score-unit">/100</span></div>'
+   + '<div class="score-bar"><div class="score-fill" style="background:#E8734A;width:'+w+'%"></div></div>'
+   + '<div class="score-note">'+(w>=65?'敵意のなさが、行動として十分に出ています。':w>=40?'伝わってはいますが、場面によってムラがあります。':'相手が判断するには、情報が足りていません。')+'</div></div>'
+   + '<div class="score-card"><div class="score-name">有能さ</div>'
+   + '<div class="score-val" style="color:#4AA8E8">'+c+'<span class="score-unit">/100</span></div>'
+   + '<div class="score-bar"><div class="score-fill" style="background:#4AA8E8;width:'+c+'%"></div></div>'
+   + '<div class="score-note">'+(c>=65?'任せられそうだ、という情報が届いています。':c>=40?'伝わってはいますが、場面によってムラがあります。':'力はあっても、提示の形になっていない可能性があります。')+'</div></div>'
+   + '</div>';
+
+  // 6要素の内訳
+  h+='<div class="sec"><div class="sec-label">6つの内訳 — どこで落ちているか</div><div class="sub-list">';
+  SUB_ORDER.forEach(function(k){
+    const s=SUB[k], v=sc.sub[k], col=AX[s.ax].color;
+    const mark = flat ? '' : (k===low ? '<span class="sub-flag low">いちばん低い</span>' : (k===high ? '<span class="sub-flag high">いちばん高い</span>' : ''));
+    h+='<div class="sub-row">'
+     + '<div class="sub-head"><span class="sub-name"><span class="sub-ax" style="color:'+col+'">'+AX[s.ax].name+'</span>'+s.name+'</span>'
+     + '<span class="sub-val" style="color:'+col+'">'+v+'</span></div>'
+     + '<div class="sub-bar"><div class="sub-fill" style="background:'+col+';width:'+v+'%"></div></div>'
+     + '<div class="sub-desc">'+s.desc+mark+'</div>'
+     + '</div>';
+  });
+  h+='</div><div class="micro">※ この6つの内訳は、20問を意味のまとまりで分けた<strong>この診断独自の区分</strong>です。心理学で確立された下位尺度ではありません。2軸（温かさ・有能さ）のほうが、研究の裏づけがある部分です。</div></div>';
+
+  // 信頼性
+  h+='<div class="rel-box"><div class="rel-top">'
+   + '<span class="rel-label">回答の信頼性</span>'
+   + '<span class="rel-badge" style="background:'+rel.color+'22;color:'+rel.color+'">'+rel.label+'</span>'
+   + '</div><div class="rel-note">'+rel.note+'</div></div>';
+
+  // 見え方
+  h+='<div class="sec"><div class="sec-label">こんな場面、心当たりはありませんか</div><div class="scene">';
+  t.scene.forEach(function(s){ h+='<div class="scene-row"><span class="scene-mark">●</span><span>'+s+'</span></div>'; });
+  h+='</div></div>';
+
+  // 場面別
+  h+='<div class="sec"><div class="sec-label">場面別の見え方</div><div class="step">';
+  SCENES.forEach(function(sc2){
+    h+='<div class="step-row"><div class="step-num" style="background:rgba(74,168,232,.15);color:#4AA8E8">◇</div>'
+     + '<div class="step-txt"><b>'+sc2.name+'</b>'+sc2.map[key]+'</div></div>';
+  });
+  h+='</div></div>';
+
+  // 強み
+  h+='<div class="sec"><div class="sec-label">いま効いているもの</div><div class="sec-body">'
+   + (flat ? '6つの要素がすべて同じ高さでした。突出も欠けもない状態です。まずはどれか一つを選んで伸ばすと、印象に輪郭が出ます。' : STRENGTH[high])
+   + '</div></div>';
+
+  // 処方
+  const rx=RX[low];
+  h+='<div class="sec" style="border-color:rgba(232,115,74,.28)"><div class="sec-label">次の一歩 — 直す場所は「'+rx.label+'」ひとつです</div>'
+   + '<div class="sec-body" style="margin-bottom:1.1rem">'+(flat?'6つとも同じ高さでしたので、まずは<strong>'+rx.label+'</strong>から動かしてみてください。':'6つのうち、いちばん情報が出ていないのが<strong>'+rx.label+'</strong>（'+sc.sub[low]+'点）でした。')+'全部を変える必要はありません。ここだけ動かせば、2軸のスコアは連動して上がります。</div>'
+   + '<div class="step">';
+  rx.steps.forEach(function(s,i){ h+='<div class="step-row"><div class="step-num">'+(i+1)+'</div><div class="step-txt"><b>'+s[0]+'</b>'+s[1]+'</div></div>'; });
+  h+='</div></div>';
+
+  // 出典
+  h+='<div class="src"><div class="sec-label">この診断の土台</div>'
+   + '<p><strong style="color:#c8d4e6">分野：社会心理学（対人認知）</strong><br>'
+   + '2軸の枠組みは、Fiske・Cuddy・Glick らが提唱した<strong style="color:#c8d4e6">ステレオタイプ内容モデル（Stereotype Content Model）</strong>に基づいています。人が他者を評価するとき、温かさと有能さという2つの次元が中心になること、そして温かさのほうが先に判断されやすいことが、この研究群で繰り返し報告されています。</p>'
+   + '<p style="margin-top:.9rem">個々の設問は、対人コミュニケーション研究で扱われる行動指標 — 非言語的即時性、知覚された応答性、感情表出性、自己開示、自己提示 — を<strong style="color:#c8d4e6">参照して作成した独自項目</strong>です。既存尺度の項目をそのまま使ったものではありません。</p>'
+   + '<p style="margin-top:.9rem">結果は傾向の可視化であり、人格の評価でも臨床的な診断でもありません。数字そのものより、どこに情報が足りていないかを見るための目安としてお使いください。</p></div>';
+
+  h+='<button class="btn-retry" onclick="location.reload()">← もう一度やってみる</button>';
+
+  document.getElementById('resultBody').innerHTML=h;
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
